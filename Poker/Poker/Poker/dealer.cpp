@@ -1,4 +1,3 @@
-
 #include "dealer.h"
 #include "player.h"
 #include "card.h"
@@ -29,8 +28,9 @@ void DEALER::draw( const int number_to_draw )
 		m_player->add_card(card);
 		num_drawn++;
 	}
+	m_player->calculate_hand();
 	m_player->print_hand();
-	//m_player->reset_hand();
+	m_player->reset_hand();
 }
 
 // --------------------------------------------------------------------------
@@ -46,9 +46,10 @@ void DEALER::shuffle()
 void DEALER::swap()
 {
 	shuffle();
-	//TODO ADD USER INPUT FOR SWAPPING CARDS LIKE WEST HAM EXAMPLE
-	int hand_index_to_swap = 0;
-	const auto card = m_deck->at( 0 ).get();
-	m_player->swap_card(hand_index_to_swap, card);
-	m_player->print_hand();
+	
+// 	//TODO ADD USER INPUT FOR SWAPPING CARDS LIKE WEST HAM EXAMPLE
+// 	int hand_index_to_swap = 0;
+// 	const auto card = m_deck->at( 0 ).get();
+// 	m_player->swap_card(hand_index_to_swap, card);
+	//m_player->print_hand();
 }
