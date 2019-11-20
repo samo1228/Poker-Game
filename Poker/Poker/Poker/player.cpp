@@ -41,6 +41,7 @@ int PLAYER::calculate_hand()
 	int first_pair_value = 0;
 	int second_pair_value = 0;
 	int first_triple_value = 0;
+	
 
 	//triple
 	//check if there is a triple
@@ -87,9 +88,50 @@ int PLAYER::calculate_hand()
 		}
 	}
 
+	bool is_flush = true; // creating a check to tell if the hand has a flush
+	bool is_straight = true; //creating a check to tell if the hand has a straight
+
+	// straight
+	    // check if card is one less then the next card
+	for ( auto i = 0; i < hand.size() - 1; i++ )
+	{
+		if ( hand[i]->get_value() != hand[i + 1]->get_value()-1 )
+		{
+			is_straight = false;
+			break;
+		}
+	}
+
+	// flush
+	   // check if all five cards have the same suit
+	for ( auto i = 0; i < hand.size() - 1; i++ )
+	{
+		if ( hand[i]->get_suit() != hand[i + 1]->get_suit() )
+		{
+			is_flush = false;
+			break;
+		}
+	}
+
+	// straight flush
+   // check if 'is_flush' and 'is_straight' is true
+	if ( is_flush && is_straight )
+	{
+		best_hand = HAND_TYPE::STRAIGHT_FLUSH;
+	}
+	else if ( is_flush )
+	{
+		best_hand = HAND_TYPE::FLUSH;
+	}
+	else if ( is_straight )
+	{
+		best_hand = HAND_TYPE::STRAIGHT;
+	}
 
 
-	std::cout << std::endl << "* Hand Value: *" << best_hand << std::endl;
+
+
+	std::cout << std::endl << "* Hand Value: *" << player_utilities::get_name_of_hand_type((HAND_TYPE)best_hand) << std::endl;
 
 	//check if have five of a kind
 	   //loop through five cards check if all the same value
@@ -101,6 +143,38 @@ int PLAYER::calculate_hand()
 
 	//full house
 	return 0;
+}
+
+// --------------------------------------------------------------------------
+//! Returns a readable name for the hand types
+// --------------------------------------------------------------------------
+std::string player_utilities::get_name_of_hand_type( const HAND_TYPE hand_type )
+{
+	switch ( hand_type )
+	{
+	case HAND_TYPE::FIVE_OF_A_KIND:
+		return "Five of a kind";
+	case HAND_TYPE::STRAIGHT_FLUSH:
+		return "Straight Flush";
+	case HAND_TYPE::FOUR_OF_A_KIND:
+		return "Four Of A Kind";
+	case HAND_TYPE::FULL_HOUSE:
+		return "Full House";
+	case HAND_TYPE::FLUSH:
+		return "Flush";
+	case HAND_TYPE::STRAIGHT:
+		return "Straight";
+	case HAND_TYPE::THREE_OF_A_KIND:
+		return "Three Of A Kind";
+	case HAND_TYPE::TWO_PAIR:
+		return "Two Pair";
+	case HAND_TYPE::ONE_PAIR:
+		return "One Pair";
+	case HAND_TYPE::HIGH_CARD:
+		return "High Card";
+	default:
+		return "Nothing";
+	}
 }
 
 void PLAYER::print_hand()
