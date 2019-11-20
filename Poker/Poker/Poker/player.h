@@ -32,3 +32,8 @@ public:
 private:
     std::array <const CARD*, PLAYER_HAND_SIZE> hand;
 };
+
+namespace player_utilities
+{
+	static std::string get_name_of_hand_type( HAND_TYPE hand_type );
+}
