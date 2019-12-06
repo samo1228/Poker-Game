@@ -1,3 +1,4 @@
+
 #include "dealer.h"
 #include "player.h"
 #include "card.h"
@@ -7,13 +8,19 @@
 #include <random>
 #include <vector>
 
+const int number_of_players = 5;
 // --------------------------------------------------------------------------
 //! Constructor
 // --------------------------------------------------------------------------
 DEALER::DEALER()
 {
 	m_deck = std::make_unique<DECK>();
-	m_player = std::make_unique<PLAYER>();
+	
+	for ( auto i = 0; i < number_of_players; i++)
+	{
+		auto player = std::make_unique<PLAYER>();
+		player_list.push_back( std::move(player) );
+	}
 }
 
 // --------------------------------------------------------------------------
@@ -24,13 +31,37 @@ void DEALER::draw( const int number_to_draw )
 	int num_drawn = 0;
 	while ( num_drawn < number_to_draw )
 	{
-		const auto card = m_deck->at( num_drawn ).get();
-		m_player->add_card(card);
+		for ( auto i = 0; i < number_of_players; i++ )
+		{
+			const auto card = m_deck->at(num_drawn + (i * 5)).get();
+			player_list[i]->add_card( card );
+		}
 		num_drawn++;
 	}
-	m_player->calculate_hand();
-	m_player->print_hand();
-	m_player->reset_hand();
+
+	int winning_player;
+	int best_hand = -1;
+
+	for ( auto i = 0; i < number_of_players; i++ )
+	{
+		auto hand = player_list[i]->calculate_hand();
+		player_list[i]->print_hand();
+
+		if (hand > best_hand )
+		{
+			best_hand= hand;
+			winning_player = i;
+		}
+	}
+
+	std::cout << std::endl << "* Player " << ( winning_player + 1 ) << " wins" << std::endl;
+
+
+	for ( auto i = 0; i < number_of_players; i++ )
+	{
+		player_list[i]->reset_hand();
+	}
+
 }
 
 // --------------------------------------------------------------------------
