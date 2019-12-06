@@ -7,6 +7,7 @@
 
 #include "player.h"
 #include "deck.h"
+#include <vector>
 #include <memory>
 
 
@@ -21,5 +22,5 @@ public:
 
 private:
 	std::unique_ptr<DECK> m_deck{ nullptr };
-	std::unique_ptr<PLAYER> m_player{ nullptr };
+	std::vector<std::unique_ptr<PLAYER>> player_list;
 };
