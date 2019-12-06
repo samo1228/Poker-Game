@@ -1,6 +1,8 @@
 #include "dealer.h"
 #include "card.h"
 #include "player.h"
+
+#include <map>
 #include <iostream>
 
 PLAYER::PLAYER()
@@ -37,95 +39,142 @@ bool compare_name_func( const CARD* a, const CARD* b )
 int PLAYER::calculate_hand()
 {
 	std::sort( hand.begin(), hand.end(), compare_name_func );
-	int best_hand = 0;
-	int first_pair_value = 0;
-	int second_pair_value = 0;
-	int first_triple_value = 0;
-	
-
-	//triple
-	//check if there is a triple
-	for ( auto i = 0; i < hand.size() - 1; i++ )
+	HAND_TYPE best_hand = HAND_TYPE::HIGH_CARD;
+	int first_value = 0;
+	int second_value = 0;
+	std::map<int, int> card_count;
+	for ( auto card : hand )
 	{
-		if ( hand[i]->get_value() == hand[i + 1]->get_value() && (i + 2 < hand.size() && hand[i]->get_value() == hand[i + 2]->get_value()) )
+		auto find_ite = card_count.find( card->get_value() );
+		if ( find_ite == card_count.end() )
 		{
-			best_hand = HAND_TYPE::THREE_OF_A_KIND;
-			first_triple_value = hand[i]->get_value();
-			break;
+			card_count[card->get_value()] = 1;
+		}
+		else
+		{
+			find_ite->second++;
 		}
 	}
-	//Pair
-			//check if two cards match
-	for ( auto i = 0; i < hand.size() - 1; i++ )
-	{
-		if ( hand[i]->get_value() != first_triple_value && hand[i]->get_value() == hand[i+1]->get_value() &&  ( i + 2 >= hand.size() || hand[i]->get_value() != hand[i+2]->get_value() ) )
-		{
-			if ( best_hand == HAND_TYPE::THREE_OF_A_KIND )
-			{
-				best_hand = HAND_TYPE::FULL_HOUSE;
-			}
-			else
-			{
-				best_hand = HAND_TYPE::ONE_PAIR;
-			}
-			first_pair_value = hand[i]->get_value();
 
-			break;
-		}
-	}
-	// two pair
-			//check if two sets of two card match
-	if ( best_hand == HAND_TYPE::ONE_PAIR )
+	const auto size_of_map = card_count.size();
+	if ( size_of_map == 4 )
 	{
+		best_hand = HAND_TYPE::PAIR;
+
 		for ( auto i = 0; i < hand.size() - 1; i++ )
 		{
-			if ( hand[i]->get_value() != first_pair_value && hand[i]->get_value() == hand[i + 1]->get_value() && (i+2 >= hand.size() || hand[i]->get_value() != hand[i + 2]->get_value()) )
+			if ( i + 1 < hand.size() && hand[i]->get_value() == hand[i + 1]->get_value() )
 			{
-				best_hand = HAND_TYPE::TWO_PAIR;
-				second_pair_value = hand[i]->get_value();
+				first_value = hand[i]->get_value();
 				break;
 			}
 		}
 	}
-
-	bool is_flush = true; // creating a check to tell if the hand has a flush
-	bool is_straight = true; //creating a check to tell if the hand has a straight
-
-	// straight
-	    // check if card is one less then the next card
-	for ( auto i = 0; i < hand.size() - 1; i++ )
+	else if ( size_of_map == 3 )
 	{
-		if ( hand[i]->get_value() != hand[i + 1]->get_value()-1 )
+		best_hand = HAND_TYPE::TWO_PAIR;
+		for ( auto entry : card_count )
 		{
-			is_straight = false;
-			break;
+			if ( entry.second == 3 )
+			{
+				best_hand = HAND_TYPE::THREE_OF_A_KIND;
+				break;
+			}
+		}
+		for ( auto i = hand.size()-1; i >= 0; i-- )
+		{
+			if ( i - 1 >= 0 && hand[i]->get_value() == hand[i - 1]->get_value() )
+			{
+				if ( best_hand == HAND_TYPE::TWO_PAIR )
+				{
+					second_value = hand[i]->get_value();
+				}
+				else 
+				{
+					first_value = hand[i]->get_value();
+				}
+				break;
+			}
 		}
 	}
-
-	// flush
-	   // check if all five cards have the same suit
-	for ( auto i = 0; i < hand.size() - 1; i++ )
+	else if ( size_of_map == 2 )
 	{
-		if ( hand[i]->get_suit() != hand[i + 1]->get_suit() )
+		const auto first_entry_value = card_count.begin()->second;
+		if ( first_entry_value == 1 || first_entry_value == 4 )
 		{
-			is_flush = false;
-			break;
+			best_hand = HAND_TYPE::FOUR_OF_A_KIND;
+		}
+		else
+		{
+			best_hand = HAND_TYPE::FULL_HOUSE;
+		}
+
+		for ( auto i = hand.size() - 1; i >= 0; i-- )
+		{
+			if ( i - 1 >= 0 && hand[i]->get_value() == hand[i - 1]->get_value() )
+			{
+				if ( best_hand == HAND_TYPE::FULL_HOUSE )
+				{
+					second_value = hand[i]->get_value();
+				}
+				else
+				{
+					first_value = hand[i]->get_value();
+				}
+				break;
+			}
 		}
 	}
+	else if ( size_of_map == 5 )
+	{
+		bool is_flush = true; // creating a check to tell if the hand has a flush
+		bool is_straight = true; //creating a check to tell if the hand has a straight
 
-	// straight flush
-   // check if 'is_flush' and 'is_straight' is true
-	if ( is_flush && is_straight )
-	{
-		best_hand = HAND_TYPE::STRAIGHT_FLUSH;
-	}
-	else if ( is_flush )
-	{
-		best_hand = HAND_TYPE::FLUSH;
-	}
-	else if ( is_straight )
-	{
-		best_hand = HAND_TYPE::STRAIGHT;
+			// straight
+		// check if card is one less then the next card
+		for ( auto i = 0; i < hand.size() - 1; i++ )
+		{
+			if ( hand[i]->get_value() != hand[i + 1]->get_value() - 1 )
+			{
+				is_straight = false;
+				break;
+			}
+		}
+
+		// flush
+		   // check if all five cards have the same suit
+		for ( auto i = 0; i < hand.size() - 1; i++ )
+		{
+			if ( hand[i]->get_suit() != hand[i + 1]->get_suit() )
+			{
+				is_flush = false;
+				break;
+			}
+		}
+
+		// straight flush
+	   // check if 'is_flush' and 'is_straight' is true
+		if ( is_flush && is_straight )
+		{
+			// 		if ( hand.begin()->get_value() == 10 )
+			// 		{
+			// 			best_hand = HAND_TYPE::ROYAL_FLUSH;
+			// 		}
+			// 		else
+			// 		{
+			best_hand = HAND_TYPE::STRAIGHT_FLUSH;
+			//}
+		}
+		else if ( is_flush )
+		{
+			best_hand = HAND_TYPE::FLUSH;
+		}
+		else if ( is_straight )
+		{
+			best_hand = HAND_TYPE::STRAIGHT;
+		}
+
+		first_value = hand[hand.size() - 1]->get_value();
 	}
 
 
@@ -133,16 +182,7 @@ int PLAYER::calculate_hand()
 
 	std::cout << std::endl << "* Hand Value: *" << player_utilities::get_name_of_hand_type((HAND_TYPE)best_hand) << std::endl;
 
-	//check if have five of a kind
-	   //loop through five cards check if all the same value
-	//check if have straight flush
-	    //look through all cards 
-			// - check if same suit
-			// check if numbers all together
-	//check if have 4 of a kind
-
-	//full house
-	return 0;
+	return  ((int)best_hand * 1000 ) + first_value + second_value; // getting the best hand value and multiplying it by 1000 to get an easier value to work out. It then gets the int values in a case of a draw to work out who has the better hand
 }
 
 // --------------------------------------------------------------------------
@@ -152,8 +192,6 @@ std::string player_utilities::get_name_of_hand_type( const HAND_TYPE hand_type )
 {
 	switch ( hand_type )
 	{
-	case HAND_TYPE::FIVE_OF_A_KIND:
-		return "Five of a kind";
 	case HAND_TYPE::STRAIGHT_FLUSH:
 		return "Straight Flush";
 	case HAND_TYPE::FOUR_OF_A_KIND:
@@ -168,8 +206,8 @@ std::string player_utilities::get_name_of_hand_type( const HAND_TYPE hand_type )
 		return "Three Of A Kind";
 	case HAND_TYPE::TWO_PAIR:
 		return "Two Pair";
-	case HAND_TYPE::ONE_PAIR:
-		return "One Pair";
+	case HAND_TYPE::PAIR:
+		return "Pair";
 	case HAND_TYPE::HIGH_CARD:
 		return "High Card";
 	default:
@@ -192,3 +230,4 @@ void PLAYER::reset_hand()
 		hand[i] = nullptr;
 	}
 }
+
