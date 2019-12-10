@@ -18,6 +18,20 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="card.cpp" />
+    <ClCompile Include="dealer.cpp" />
+    <ClCompile Include="deck.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="Poker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="card.h" />
+    <ClInclude Include="dealer.h" />
+    <ClInclude Include="deck.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="poker_defs.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{518A5CFB-5BA7-42DF-81AE-72C3C987AE66}</ProjectGuid>
@@ -150,23 +164,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="card.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="dealer.cpp" />
-    <ClCompile Include="deck.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="player.cpp" />
-    <ClCompile Include="Poker.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="card.h" />
-    <ClInclude Include="dealer.h" />
-    <ClInclude Include="deck.h" />
-    <ClInclude Include="player.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

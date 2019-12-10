@@ -1,9 +1,10 @@
+#pragma once
+
 #include <array>
+#include "card.h"
+#include "poker_defs.h"
 
-class SAM
-{
 
-};
 
 class PLAYER
 {
@@ -19,7 +20,7 @@ public:
 	int calculate_hand();
 
 private:
-    PLAYER_HAND hand;
+	PLAYER_HAND hand;
 };
 
 namespace player_utilities

@@ -1,12 +1,11 @@
 
 #include "dealer.h"
-#include "player.h"
-#include "card.h"
 
 #include <algorithm>
 #include <iostream>
 #include <random>
 #include <vector>
+
 
 const int number_of_players = 5;
 // --------------------------------------------------------------------------

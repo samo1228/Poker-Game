@@ -10,7 +10,7 @@ PLAYER::PLAYER()
 	reset_hand();
 }
 
-void PLAYER::add_card( const CARD* card)
+void PLAYER::add_card( const CARD* card )
 {
 	for ( auto i = 0; i < PLAYER_HAND_SIZE; i++ )
 	{
@@ -19,8 +19,8 @@ void PLAYER::add_card( const CARD* card)
 			hand[i] = card;
 			break;
 		}
-		
-    }
+
+	}
 }
 
 void PLAYER::swap_card( int card_to_swap, const CARD* card )
@@ -31,7 +31,7 @@ void PLAYER::swap_card( int card_to_swap, const CARD* card )
 	}
 }
 
-bool compare_name_func( const CARD* a, const CARD* b ) 
+bool compare_name_func( const CARD* a, const CARD* b )
 {
 	return a->get_value() < b->get_value();
 }
@@ -81,7 +81,7 @@ int PLAYER::calculate_hand()
 				break;
 			}
 		}
-		for ( auto i = hand.size()-1; i >= 0; i-- )
+		for ( auto i = hand.size() - 1; i >= 0; i-- )
 		{
 			if ( i - 1 >= 0 && hand[i]->get_value() == hand[i - 1]->get_value() )
 			{
@@ -89,7 +89,7 @@ int PLAYER::calculate_hand()
 				{
 					second_value = hand[i]->get_value();
 				}
-				else 
+				else
 				{
 					first_value = hand[i]->get_value();
 				}
@@ -180,9 +180,9 @@ int PLAYER::calculate_hand()
 
 
 
-	std::cout << std::endl << "* Hand Value: *" << player_utilities::get_name_of_hand_type((HAND_TYPE)best_hand) << std::endl;
+	std::cout << std::endl << "* Hand Value: *" << player_utilities::get_name_of_hand_type( (HAND_TYPE)best_hand ) << std::endl;
 
-	return  ((int)best_hand * 1000 ) + first_value + second_value; // getting the best hand value and multiplying it by 1000 to get an easier value to work out. It then gets the int values in a case of a draw to work out who has the better hand
+	return  ((int)best_hand * 1000) + first_value + second_value; // getting the best hand value and multiplying it by 1000 to get an easier value to work out. It then gets the int values in a case of a draw to work out who has the better hand
 }
 
 // --------------------------------------------------------------------------
@@ -219,7 +219,7 @@ void PLAYER::print_hand()
 {
 	for ( auto i = 0; i < PLAYER_HAND_SIZE; i++ )
 	{
-		card_utilities::print_card_info( hand[i]);
+		card_utilities::print_card_info( hand[i] );
 	}
 }
 
